@@ -1,0 +1,144 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
+		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
+		<OutputType>Exe</OutputType>
+		<RootNamespace>KinectDemo2</RootNamespace>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<PlatformTarget>x64</PlatformTarget>
+
+		<!-- Display name -->
+		<ApplicationTitle>KinectDemo2</ApplicationTitle>
+
+		<!-- App Identifier -->
+		<ApplicationId>com.companyname.kinectdemo2</ApplicationId>
+		<ApplicationIdGuid>ac4b32e7-02c9-4f6f-97ff-c767be77b117</ApplicationIdGuid>
+
+		<!-- Versions -->
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+		<Platforms>AnyCPU;x64</Platforms>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- App Icon -->
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+
+		<!-- Splash Screen -->
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+
+		<!-- Images -->
+		<MauiImage Include="Resources\Images\*" />
+		<MauiImage Update="Resources\Images\arrow_right_circle.svg">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</MauiImage>
+		<MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
+
+		<!-- Custom Fonts -->
+		<MauiFont Include="Resources\Fonts\*" />
+
+		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AndroidResource Remove="Custom\Control\Graph\**" />
+	  <Compile Remove="Custom\Control\Graph\**" />
+	  <EmbeddedResource Remove="Custom\Control\Graph\**" />
+	  <MauiCss Remove="Custom\Control\Graph\**" />
+	  <MauiXaml Remove="Custom\Control\Graph\**" />
+	  <None Remove="Custom\Control\Graph\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Resources\Fonts\ZenMaruGothic-Black.ttf" />
+	  <None Remove="Resources\Fonts\ZenMaruGothic-Bold.ttf" />
+	  <None Remove="Resources\Fonts\ZenMaruGothic-Light.ttf" />
+	  <None Remove="Resources\Fonts\ZenMaruGothic-Medium.ttf" />
+	  <None Remove="Resources\Fonts\ZenMaruGothic-Regular.ttf" />
+	  <None Remove="Resources\Images\arrow_right_circle.svg" />
+	  <None Remove="Resources\Images\azure_kinect_dk.jpeg" />
+	  <None Remove="Resources\Images\black_color.svg" />
+	  <None Remove="Resources\Images\camera.svg" />
+	  <None Remove="Resources\Images\camera_white.svg" />
+	  <None Remove="Resources\Images\chevron_right.svg" />
+	  <None Remove="Resources\Images\cpu.svg" />
+	  <None Remove="Resources\Images\info.svg" />
+	  <None Remove="Resources\Images\line_chart.svg" />
+	  <None Remove="Resources\Images\pause_circle.svg" />
+	  <None Remove="Resources\Images\play_circle.svg" />
+	  <None Remove="Resources\Images\sample.jpg" />
+	  <None Remove="Resources\Images\save.svg" />
+	  <None Remove="Resources\Images\save_thin.svg" />
+	  <None Remove="Resources\Images\settings.svg" />
+	  <None Remove="Resources\Images\user.svg" />
+	  <None Remove="Resources\Images\x_circle.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" Version="6.0.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+		<PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
+		<PackageReference Include="Microsoft.Azure.Kinect.BodyTracking" Version="1.1.2" />
+		<PackageReference Include="Microsoft.Azure.Kinect.Sensor" Version="1.4.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
+		<PackageReference Include="Moq" Version="4.20.69" />
+		<PackageReference Include="pythonnet" Version="3.0.3" />
+		<PackageReference Include="SkiaSharp" Version="2.88.6" />
+		<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.6" />
+		<PackageReference Include="SkiaSharp.Views.Maui.Core" Version="2.88.6" />
+		<PackageReference Include="Syncfusion.Maui.Buttons" Version="23.1.40" />
+		<PackageReference Include="Syncfusion.Maui.Charts" Version="23.1.40" />
+		<PackageReference Include="Syncfusion.Maui.Core" Version="23.1.40" />
+		<PackageReference Include="Syncfusion.Maui.Expander" Version="23.1.40" />
+		<PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+		<PackageReference Include="xunit" Version="2.5.1" />
+		<PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Custom\Control\Button\Base\ClickableButton.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Custom\Control\Button\IconProcessingButton.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Custom\Control\List\ExpandListedView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Custom\Control\Switch\Base\SwitchBase.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Custom\Control\Switch\NSwitch.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Custom\Layout\HeaderContainer.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Custom\Page\Base\PageBase.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Custom\PopUp\InfoPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Custom\ViewModel\Composition\" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KinectDemo2.Resources.DefaultTheme">
+    
+    <!-- Color Properties -->
+    <Color x:Key="PagePrimaryColor">ForestGreen</Color>
+    <Color x:Key="PageSubColor">LightGreen</Color>
+    <Color x:Key="TextPrimaryColor">White</Color>
+    <Color x:Key="TextSubColor">black</Color>
+    
+    <!-- Size Properties -->
+    <x:Double x:Key="TextTitleBarSize">25</x:Double>
+</ResourceDictionary>

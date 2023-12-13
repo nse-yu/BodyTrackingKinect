@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:base="clr-namespace:KinectDemo2.Custom.Page.Base"
+             xmlns:vm="clr-namespace:KinectDemo2.Custom.ViewModel"
+             x:Class="KinectDemo2.Custom.Page.Base.PageBase"
+             x:DataType="vm:PageBaseViewModel"
+             Title="PageBase">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <x:String x:Key="PageTitle"></x:String>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <FlyoutBase.ContextFlyout>
+        <MenuFlyout>
+            <MenuFlyoutItem x:Name="menu_activate_camera" 
+                            Text="Activate camera"
+                            IconImageSource="play_circle.png"/>
+            <MenuFlyoutItem x:Name="menu_stop_camera" 
+                            Text="Stop camera"
+                            IconImageSource="pause_circle.png"/>
+        </MenuFlyout>
+    </FlyoutBase.ContextFlyout>
+
+    <Shell.TitleView>
+        <HorizontalStackLayout>
+            <Label TextColor="{StaticResource TextPrimaryColor}"
+                   FontSize="{StaticResource TextTitleBarSize}"
+                   Text="{DynamicResource Key=PageTitle}" 
+                   VerticalOptions="CenterAndExpand"
+                   Padding="20,0,0,0"/>
+        </HorizontalStackLayout>
+    </Shell.TitleView>
+    
+</ContentPage>

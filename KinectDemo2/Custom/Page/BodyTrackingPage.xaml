@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:PageBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               x:Class="KinectDemo2.Custom.Page.BodyTrackingPage"
+               x:DataType="viewModel:KinectBodyTrackingViewModel"
+               xmlns:base="clr-namespace:KinectDemo2.Custom.Page.Base"
+               xmlns:viewModel="clr-namespace:KinectDemo2.Custom.ViewModel"
+               xmlns:btn="clr-namespace:KinectDemo2.Custom.Control.Button"
+               xmlns:switch="clr-namespace:KinectDemo2.Custom.Control.Switch"
+               xmlns:model="clr-namespace:KinectDemo2.Custom.Model.kinect"
+               xmlns:conv="clr-namespace:KinectDemo2.Custom.Control.Converter"
+               xmlns:trigger="clr-namespace:KinectDemo2.Custom.Helper.TriggerActions"
+               xmlns:page="clr-namespace:KinectDemo2.Custom.Page"
+               xmlns:list="clr-namespace:KinectDemo2.Custom.Control.List"
+               x:Name="this"
+               Title="BodyTrackingPage">
+
+    <base:PageBase.Resources>
+        <ResourceDictionary>
+            <x:Double x:Key="ColumnDef_Right_Panel">360</x:Double>
+            <Color x:Key="BackgroundDef_Right_Panel">white</Color>
+            <x:Double x:Key="BackgroundOpacity_Right_Panel">0.95</x:Double>
+        </ResourceDictionary>
+    </base:PageBase.Resources>
+
+    <Grid RowDefinitions="*">
+        <Grid RowDefinitions="*, 10, 50"
+              HorizontalOptions="FillAndExpand"
+              BackgroundColor="Black">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="{StaticResource ColumnDef_Right_Panel}" />
+            </Grid.ColumnDefinitions>
+            
+            <!-- Main screen which shows the captured image and ... -->
+            <Grid Grid.Column="0"
+                  VerticalOptions="FillAndExpand">
+                
+                <!-- Notification bar to be animated -->
+                <Border x:Name="notifyBar"
+                        Stroke="Transparent" 
+                        BackgroundColor="White" 
+                        HorizontalOptions="Start"
+                        VerticalOptions="Start"
+                        WidthRequest="{Static page:BodyTrackingPage.NotificationBarWidth}"
+                        TranslationX="{Static page:BodyTrackingPage.InitialTranslationX}"
+                        Padding="10"
+                        Margin="0, 30"
+                        Opacity=".8"
+                        ZIndex="130">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="0,10,0,10" />
+                    </Border.StrokeShape>
+                    <Label x:Name="notifyBarText"
+                           Text=""
+                           TextColor="Black"
+                           FontSize="Subtitle"
+                           ZIndex="100"/>
+                </Border>
+
+                <!-- Expandable list of switches -->
+                <list:ExpandListedView ZIndex="100"
+                                       Expanded="False"
+                                       HeightRequest="60"
+                                       VerticalOptions="End"
+                                       Margin="0, 0, 0, 10"
+                                       ButtonWidth="20"
+                                       Color="White">
+                    <list:ExpandListedView.Contents>
+                        <HorizontalStackLayout BindingContext="{Binding Source={x:Reference this}, Path=BindingContext}">
+                            <switch:NSwitch ThumbColor="White"
+                                            OnColor="blue"
+                                            OffColor="{StaticResource PagePrimaryColor}"
+                                            OffTextColor="{StaticResource PagePrimaryColor}"
+                                            OnTextColor="blue"
+                                            OnText="Submit"
+                                            OffText="Not Send"
+                                            IsToggled="{Binding IsSubmitScores}"
+                                            TextVisibility="true"
+                                            Margin="20, 0, 0, 0"/>
+                            <switch:NSwitch ThumbColor="White"
+                                            OnColor="blue"
+                                            OffColor="{StaticResource PagePrimaryColor}"
+                                            OffTextColor="{StaticResource PagePrimaryColor}"
+                                            OnTextColor="blue"
+                                            OnText="Silent"
+                                            OffText="Alert"
+                                            IsToggled="{Binding IsMonitoringModeOn}"
+                                            TextVisibility="true" />
+                        </HorizontalStackLayout>
+                    </list:ExpandListedView.Contents>
+                </list:ExpandListedView>
+                
+                <!-- RGB images -->
+                <Image VerticalOptions="CenterAndExpand" Source="{Binding ImageRGB}" ZIndex="88"/>
+            </Grid>
+
+            <!-- Right side menu including button to save joint in csv and carousel list to show captured joints per frame -->
+            <HorizontalStackLayout Grid.Column="1">
+                <BoxView WidthRequest="2" Color="#ffffff" Opacity=".7" />
+
+                <Grid ColumnDefinitions="*">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <HorizontalStackLayout Padding="15, 15, 15, 15"
+                                           Opacity="{StaticResource BackgroundOpacity_Right_Panel}"
+                                           BackgroundColor="{StaticResource BackgroundDef_Right_Panel}">
+                        <btn:IconButton Icon="save_thin.png"
+                                            IconWidth="25"
+                                            IconHeight="25"
+                                            ToolTipProperties.Text="save to csv"
+                                            ClickedCommand="{Binding SaveToCsvCommand}"
+                                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <CollectionView Grid.Row="1"
+                                  VerticalScrollBarVisibility="Always"
+                                  BackgroundColor="{StaticResource BackgroundDef_Right_Panel}"
+                                  Opacity="{StaticResource BackgroundOpacity_Right_Panel}"
+                                  ItemsSource="{Binding Joints}">
+                        <CollectionView.Resources>
+                            <Style TargetType="Label">
+                                <Setter Property="TextColor" Value="{StaticResource TextSubColor}" />
+                            </Style>
+                        </CollectionView.Resources>
+
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="20" />
+                        </CollectionView.ItemsLayout>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="model:KinectJoint">
+                                <Grid RowDefinitions="*, *, *"
+                                      RowSpacing="10"
+                                      Padding="20,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource ColumnDef_Right_Panel}" />
+                                    </Grid.ColumnDefinitions>
+                                    <HorizontalStackLayout Spacing="20">
+                                        <Label Text="{Binding Id}" FontSize="Title" VerticalOptions="Center" />
+                                        <Label Text="{Binding Id, Converter={conv:IdConverter}}" FontSize="14" VerticalOptions="End" />
+                                    </HorizontalStackLayout>
+                                    <VerticalStackLayout Grid.Row="1" Margin="20,0,0,0">
+                                        <Label Text="Position" FontSize="Caption" />
+                                        <HorizontalStackLayout Spacing="10" Margin="20,0,0,0">
+                                            <Label Text="{Binding PositionX, StringFormat='X = {0:F2}'}" />
+                                            <Label Text="{Binding PositionY, StringFormat='Y = {0:F2}'}" />
+                                            <Label Text="{Binding PositionZ, StringFormat='Z = {0:F2}'}" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Row="2" Margin="20,0,0,0">
+                                        <Label Text="Quaternion" FontSize="Caption" />
+                                        <HorizontalStackLayout Spacing="10" Margin="20,0,0,0">
+                                            <Label Text="{Binding QuaternionW, StringFormat='W = {0:F2}'}" />
+                                            <Label Text="{Binding QuaternionX, StringFormat='X = {0:F2}'}" />
+                                            <Label Text="{Binding QuaternionY, StringFormat='Y = {0:F2}'}" />
+                                            <Label Text="{Binding QuaternionZ, StringFormat='Z = {0:F2}'}" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroupList>
+                                            <VisualStateGroup x:Name="Basic">
+                                                <VisualState x:Name="Normal">
+                                                    <VisualState.Setters>
+                                                        <Setter Property="Opacity" Value="1" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="PointerOver">
+                                                    <VisualState.Setters>
+                                                        <Setter Property="Opacity" Value=".3" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateGroupList>
+                                    </VisualStateManager.VisualStateGroups>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+            </HorizontalStackLayout>
+
+            <!-- ProgressBar -->
+            <Grid Grid.Row="1"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="2"
+                  RowDefinitions="2,*"
+                  ColumnDefinitions="*"
+                  Opacity=".5"
+                  BackgroundColor="WhiteSmoke">
+                <ProgressBar x:Name="progress_bar"
+                             Grid.Row="1"
+                            Progress="{Binding Progress}" 
+                            ProgressColor="{StaticResource PageSubColor}"
+                            BackgroundColor="Transparent"
+                            ScaleY="2.8" />
+            </Grid>
+
+            <!-- Bottom Bar including progress messagge, mode toggle switch and some trigger buttons -->
+            <FlexLayout Grid.Row="2"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        BackgroundColor="{StaticResource PagePrimaryColor}"
+                        JustifyContent="SpaceBetween"
+                        Padding="10,5">
+                <Label x:Name="text_connected_devices"
+                       Text="{Binding TextConnectedDevices}"
+                       VerticalOptions="CenterAndExpand"
+                       TextColor="{StaticResource TextPrimaryColor}"
+                       Margin="10,0,0,0"/>
+                <Label x:Name="progress_message"
+                       Text="{Binding ProgressLabel}"
+                       TextColor="{StaticResource TextPrimaryColor}"
+                       VerticalOptions="CenterAndExpand"
+                       HorizontalTextAlignment="Start" />
+                <HorizontalStackLayout Spacing="40">
+                    <btn:IconProcessingButton Icon="cpu.png" 
+                                        IconHeight="22" 
+                                        IconWidth="22"
+                                        IsProcessing="{Binding IsPredicting, Mode=TwoWay}"
+                                        StoppedCommand="{Binding StoppedCommand}"
+                                        ClickedCommand="{Binding MLClickedCommand}" />
+                    <btn:IconButton Icon="camera_white.png" 
+                                    IconHeight="22" 
+                                    IconWidth="22"
+                                    ClickedCommand="{Binding CameraClickedCommand}"/>
+                    <btn:PlayButton IsProcessing="{Binding IsPlaying, Mode=TwoWay}"
+                                    PreProcessCommand="{Binding BeforePlayCommand}"
+                                    ClickedCommand="{Binding PlayingCommand}"
+                                    ProcessedCommand="{Binding AfterPlayCommand}"
+                                    StoppedCommand="{Binding StoppedCommand}"/>
+                    <btn:ReloadButton Margin="0,0,10,0"
+                                          ReloadedCommand="{Binding ReloadedCommand}"
+                                          ReloadingCommand="{Binding ReloadingCommand}"/>
+                </HorizontalStackLayout>
+            </FlexLayout>
+        </Grid>
+    </Grid>
+
+</base:PageBase>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:PageBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:base="clr-namespace:KinectDemo2.Custom.Page.Base"
+               xmlns:vm="clr-namespace:KinectDemo2.Custom.ViewModel"
+               x:DataType="vm:MetaDataViewModel"
+               x:Class="KinectDemo2.Custom.Page.MetaDataPage"
+               Title="MetaDataPage">
+    
+    <base:PageBase.Resources>
+        <ResourceDictionary>
+            <x:String x:Key="NotFoundMessage">No Data</x:String>
+        </ResourceDictionary>
+    </base:PageBase.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout>
+            <TableView Intent="Data">
+                <TableView.Resources>
+                    <Style TargetType="HorizontalStackLayout">
+                        <Setter Property="Spacing" Value="20" />
+                        <Setter Property="Padding" Value="10" />
+                        <Setter Property="VerticalOptions" Value="Center" />
+                    </Style>
+                </TableView.Resources>
+                <TableRoot>
+                    <TableSection Title="Activate camera">
+                        <ViewCell>
+                            <HorizontalStackLayout>
+                                <Label Text="Start" TextColor="Red" VerticalOptions="Center" />
+                                <Switch IsToggled="{Binding IsToggleed}" 
+                                        ThumbColor="{StaticResource PageSubColor}"
+                                        OnColor="{StaticResource PagePrimaryColor}"
+                                        />
+                            </HorizontalStackLayout>
+                        </ViewCell>
+                    </TableSection>
+                    <TableSection Title="Device Configurations">
+                        <ViewCell>
+                            <HorizontalStackLayout>
+                                <Label Text="Color Format" />
+                                <Label Text="{Binding ColorFmt,TargetNullValue={StaticResource NotFoundMessage}}" />
+                            </HorizontalStackLayout>
+                        </ViewCell>
+                        <ViewCell>
+                            <HorizontalStackLayout>
+                                <Label Text="Camera FPS" />
+                                <Label Text="{Binding CameraFPS,TargetNullValue={StaticResource NotFoundMessage}}" />
+                            </HorizontalStackLayout>
+                        </ViewCell>
+                        <ViewCell>
+                            <HorizontalStackLayout>
+                                <Label Text="Color Resolution" />
+                                <Label Text="{Binding Resolution,TargetNullValue={StaticResource NotFoundMessage}}" />
+                            </HorizontalStackLayout>
+                        </ViewCell>
+                        <ViewCell>
+                            <HorizontalStackLayout>
+                                <Label Text="Depth Mode" />
+                                <Label Text="{Binding DepMode,TargetNullValue={StaticResource NotFoundMessage}}" />
+                            </HorizontalStackLayout>
+                        </ViewCell>
+                    </TableSection>
+                    <TableSection Title="Hardware Versions">
+                        <ViewCell>
+                            <HorizontalStackLayout>
+                                <Label Text="Color Camera" />
+                                <Label Text="{Binding VersionColorCamera,TargetNullValue={StaticResource NotFoundMessage}}" />
+                            </HorizontalStackLayout>
+                        </ViewCell>
+                        <ViewCell>
+                            <HorizontalStackLayout VerticalOptions="Center">
+                                <Label Text="Depth Camera" />
+                                <Label Text="{Binding VersionDepthCamera, TargetNullValue={StaticResource NotFoundMessage}}" />
+                            </HorizontalStackLayout>
+                        </ViewCell>
+                        <ViewCell>
+                            <HorizontalStackLayout VerticalOptions="Center">
+                                <Label Text="Audio Device" />
+                                <Label Text="{Binding VersionAudioDevice, TargetNullValue={StaticResource NotFoundMessage}}" />
+                            </HorizontalStackLayout>
+                        </ViewCell>
+                        <ViewCell>
+                            <HorizontalStackLayout VerticalOptions="Center">
+                                <Label Text="Depth Sensor" />
+                                <Label Text="{Binding VersionDepthSensor, TargetNullValue={StaticResource NotFoundMessage}}" />
+                            </HorizontalStackLayout>
+                        </ViewCell>
+                    </TableSection>
+                </TableRoot>
+            </TableView>
+        </VerticalStackLayout>
+    </ScrollView>
+</base:PageBase>

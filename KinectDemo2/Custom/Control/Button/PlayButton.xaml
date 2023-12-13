@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:ProcessingButton xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KinectDemo2.Custom.Control.Button.PlayButton"
+             xmlns:base="clr-namespace:KinectDemo2.Custom.Control.Button.Base"
+             xmlns:conv="clr-namespace:KinectDemo2.Custom.Control.Converter">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <conv:ReloadButtonConverter x:Key="conv" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <ContentView.GestureRecognizers>
+        <TapGestureRecognizer x:Name="PlayOnTappedRecog" />
+    </ContentView.GestureRecognizers>
+
+    <Grid RowDefinitions="*" ColumnDefinitions="*">
+        <Polygon Points="5 3 19 12 5 21 5 3"
+                 BindingContext="{x:Reference stop}"
+                 IsVisible="{Binding IsVisible, Converter={StaticResource conv}}"
+                 Stroke="white"
+                 HorizontalOptions="Start"
+                 HeightRequest="22"
+                 WidthRequest="22" />
+        <HorizontalStackLayout x:Name="stop" 
+                               IsVisible="false"
+                               VerticalOptions="Center">
+            <Rectangle StrokeLineJoin="Round" 
+                       WidthRequest="4.5" 
+                       HeightRequest="18" 
+                       Stroke="white" />
+            <BoxView WidthRequest="4.5"
+                     HeightRequest="18"
+                     Color="Transparent" />
+            <Rectangle StrokeLineJoin="Round" 
+                       WidthRequest="4.5" 
+                       HeightRequest="18" 
+                       Stroke="white" />
+        </HorizontalStackLayout>
+    </Grid>
+
+
+    <VisualStateManager.VisualStateGroups>
+        <VisualStateGroupList>
+            <VisualStateGroup x:Name="Basic">
+                <VisualState x:Name="Normal">
+                    <VisualState.Setters>
+                        <Setter Property="Opacity" Value="1" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="PointerOver">
+                    <VisualState.Setters>
+                        <Setter Property="Opacity" Value=".5" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateGroupList>
+    </VisualStateManager.VisualStateGroups>
+</base:ProcessingButton>

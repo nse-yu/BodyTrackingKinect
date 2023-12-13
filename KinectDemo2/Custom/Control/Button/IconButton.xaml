@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:ClickableButton xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:base="clr-namespace:KinectDemo2.Custom.Control.Button.Base"
+                      x:Class="KinectDemo2.Custom.Control.Button.IconButton"
+                      x:Name="this"
+                      x:DataType="base:ClickableButton">
+
+    <Grid RowDefinitions="*" ColumnDefinitions="*">
+        <Image x:Name="iconImage" Source="dotnet_bot.png" />
+    </Grid>
+    <VisualStateManager.VisualStateGroups>
+        <VisualStateGroupList>
+            <VisualStateGroup x:Name="Basic">
+                <VisualState x:Name="Normal">
+                    <VisualState.Setters>
+                        <Setter Property="Opacity" Value="1" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="PointerOver">
+                    <VisualState.Setters>
+                        <Setter Property="Opacity" Value=".5" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateGroupList>
+    </VisualStateManager.VisualStateGroups>
+
+</base:ClickableButton>

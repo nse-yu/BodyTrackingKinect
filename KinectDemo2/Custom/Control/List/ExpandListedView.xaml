@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView x:Name="this"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:KinectDemo2.Custom.Control.List"
+             xmlns:conv="clr-namespace:KinectDemo2.Custom.Control.Converter"
+             x:Class="KinectDemo2.Custom.Control.List.ExpandListedView"
+             x:DataType="list:ExpandListedView"
+             HorizontalOptions="Start"
+             MaximumHeightRequest="{Binding MaxHeight}"
+             MinimumHeightRequest="{Binding MinHeight}">
+
+    <Grid RowDefinitions="*">
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <HorizontalStackLayout x:Name="list"
+                               BackgroundColor="{Binding Color}"
+                               TranslationX="{Binding Source={x:Reference list}, Path=Width, Converter={conv:NegaPosiConverter}}" />
+
+        <Border x:Name="button"
+                Grid.Column="1"
+                StrokeThickness="0"
+                ToolTipProperties.Text="click to expand"
+                Stroke="{Binding Color}"
+                WidthRequest="{Binding ButtonWidth}"
+                BackgroundColor="{Binding Color}"
+                Padding="{Binding ButtonPadding}"
+                TranslationX="{Binding Source={x:Reference list}, Path=Width, Converter={conv:NegaPosiConverter}}">
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="1" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value=".75" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer x:Name="recog"/>
+            </Border.GestureRecognizers>
+            
+            <Border.StrokeShape>
+                <RoundRectangle x:Name="rect" CornerRadius="{Binding ButtonRadius}" />
+            </Border.StrokeShape>
+
+            <Image x:Name="img" 
+                   Source="chevron_right.png"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"/>
+        </Border>
+    </Grid>
+</ContentView>

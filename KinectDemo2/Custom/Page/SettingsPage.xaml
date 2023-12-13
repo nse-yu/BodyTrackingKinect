@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:PageBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               x:Class="KinectDemo2.Custom.Page.SettingsPage"
+               xmlns:conv="clr-namespace:KinectDemo2.Custom.Control.Converter"
+               xmlns:base="clr-namespace:KinectDemo2.Custom.Page.Base"
+               xmlns:viewModel="clr-namespace:KinectDemo2.Custom.ViewModel"
+               Title="SettingsPage">
+
+    <Grid RowDefinitions="*, 60">
+        <ScrollView>
+            <VerticalStackLayout>
+                <TableView Intent="Settings">
+                    <TableView.Resources>
+                        <Style TargetType="HorizontalStackLayout">
+                            <Setter Property="Spacing" Value="20" />
+                            <Setter Property="Padding" Value="10" />
+                            <Setter Property="VerticalOptions" Value="Center" />
+                        </Style>
+                    </TableView.Resources>
+                    <TableRoot>
+                        <TableSection Title="Environmental Settings">
+                            <ViewCell>
+                                <HorizontalStackLayout>
+                                    <Label Text="Interval of captures" 
+                                           TextColor="{StaticResource TextSubColor}" 
+                                           VerticalOptions="Center" />
+                                    <Picker VerticalOptions="Center"
+                                            ItemsSource="{x:Static viewModel:SettingsViewModel.Intervals}"
+                                            SelectedIndex="{Binding IntervalSelectedIndex}"/>
+                                </HorizontalStackLayout>
+                            </ViewCell>
+                            <ViewCell>
+                                <HorizontalStackLayout>
+                                    <Label Text="Reporting interval of scores" 
+                                           TextColor="{StaticResource TextSubColor}" 
+                                           VerticalOptions="Center" />
+                                    <Picker VerticalOptions="Center"
+                                            ItemsSource="{x:Static viewModel:SettingsViewModel.ReportIntervals}"
+                                            SelectedIndex="{Binding ReportIntervalSelectedIndex}"/>
+                                </HorizontalStackLayout>
+                            </ViewCell>
+                            <!-- auto-setting -->
+                            <ViewCell>
+                                <HorizontalStackLayout>
+                                    <Label Text="Auto Setting Mode"
+                   TextColor="{StaticResource TextSubColor}"
+                   VerticalOptions="Center" />
+                                    <Switch x:Name="switch_auto_setting"
+                    IsToggled="{Binding AutoSettingMode}"
+                    ThumbColor="{StaticResource PageSubColor}"
+                    OnColor="{StaticResource PagePrimaryColor}"
+                    VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                            </ViewCell>
+                            <!-- default-selection-send -->
+                            <ViewCell>
+                                <HorizontalStackLayout>
+                                    <Label Text="Default send selection"
+                                           TextColor="{StaticResource TextSubColor}"
+                                           VerticalOptions="Center" />
+                                    <Switch IsToggled="{Binding DefaultSendSelection}"
+                                            ThumbColor="{StaticResource PageSubColor}"
+                                            OnColor="{StaticResource PagePrimaryColor}"
+                                            VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                            </ViewCell>
+                            <!-- strictness -->
+                            <ViewCell>
+                                <HorizontalStackLayout IsVisible="{Binding Source={x:Reference switch_auto_setting}, Path=IsToggled, Converter={conv:BooleanReverseConverter}}">
+                                    <Label Text="Strictness of detection"
+                   TextColor="{StaticResource TextSubColor}"
+                   VerticalOptions="Center" />
+                                    <Slider x:Name="slider"
+                                            WidthRequest="300"
+                                            Minimum="{x:Static viewModel:SettingsViewModel.SLIDER_MIN}"
+                                            Maximum="{x:Static viewModel:SettingsViewModel.SLIDER_MAX}"
+                                            Value="{Binding SliderValue}"
+                                            ThumbColor="white"
+                                            MinimumTrackColor="{StaticResource PagePrimaryColor}"
+                                            MaximumTrackColor="{StaticResource PageSubColor}"
+                                            VerticalOptions="Center"/>
+                                    <Label Text="{Binding Source={x:Reference slider}, Path=Value, Converter={conv:SliderValueConverter}}"
+                   VerticalOptions="Center"
+                   TextColor="{StaticResource TextSubColor}" />
+                                </HorizontalStackLayout>
+                            </ViewCell>
+                            <!-- used model -->
+                            <ViewCell>
+                                <VerticalStackLayout Spacing="10" 
+                                                     Padding="10"
+                                                     RadioButtonGroup.GroupName="model"
+                                                     RadioButtonGroup.SelectedValue="{Binding ModelUseSelectedIndex, Converter={conv:ModelIndexToStringConverter}}">
+                                    <VerticalStackLayout.Resources>
+                                        <Style TargetType="VerticalStackLayout">
+                                            <Setter Property="Spacing" Value="10" />
+                                            <Setter Property="Padding" Value="20,0,0,0" />
+                                        </Style>
+                                    </VerticalStackLayout.Resources>
+                                    <Label Text="model in use" />
+                                    <HorizontalStackLayout>
+                                        <RadioButton x:Name="radio1" 
+                             VerticalOptions="Center" 
+                             GroupName="model"
+                             Value="lightning"/>
+                                        <VerticalStackLayout>
+                                            <Label Text="MoveNet-Lightning" FontSize="18" />
+                                            <Label Text="{x:Static viewModel:SettingsViewModel.DESC_MODEL_LIGHTNING}" 
+                           FontSize="14" 
+                           TextColor="Gray"
+                           LineHeight="1.6"/>
+                                        </VerticalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <RadioButton x:Name="radio2" 
+                             VerticalOptions="Center" 
+                             GroupName="model"
+                             Value="thunder" />
+                                        <VerticalStackLayout>
+                                            <Label Text="MoveNet-Thunder" FontSize="18" />
+                                            <Label Text="{x:Static viewModel:SettingsViewModel.DESC_MODEL_THUNDER}" 
+                           FontSize="14" 
+                           TextColor="Gray"
+                           LineHeight="1.6" />
+                                        </VerticalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <RadioButton x:Name="radio3" 
+                             VerticalOptions="Center" 
+                             GroupName="model"
+                             Value="mediapipe" />
+                                        <VerticalStackLayout>
+                                            <Label Text="MediaPipe" FontSize="18" />
+                                            <Label Text="{x:Static viewModel:SettingsViewModel.DESC_MODEL_MEDIAPIPE}" 
+                           FontSize="14" 
+                           TextColor="Gray"
+                           LineHeight="1.6" />
+                                        </VerticalStackLayout>
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </ViewCell>
+                        </TableSection>
+                    </TableRoot>
+                </TableView>
+            </VerticalStackLayout>
+        </ScrollView>
+        <VerticalStackLayout Grid.Row="1">
+            <Button x:Name="saveBtn"
+                    Margin="30, 10"
+                    Text="Save"
+                    Command="{Binding SavedCommand}"
+                    Background="{StaticResource PagePrimaryColor}" 
+                    TextColor="{StaticResource TextPrimaryColor}"
+                    HeightRequest="40"/>
+        </VerticalStackLayout>
+    </Grid>
+</base:PageBase>

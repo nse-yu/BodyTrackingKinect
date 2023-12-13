@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:PageBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               x:Class="KinectDemo2.Custom.Page.DataViewerPage"
+               x:DataType="vm:DataViewerViewModel"
+               xmlns:base="clr-namespace:KinectDemo2.Custom.Page.Base"
+               xmlns:vm="clr-namespace:KinectDemo2.Custom.ViewModel"
+               xmlns:page="clr-namespace:KinectDemo2.Custom.Page"
+               xmlns:nav="clr-namespace:KinectDemo2.Custom.Control.navigation"
+               xmlns:btn="clr-namespace:KinectDemo2.Custom.Control.Button"
+               xmlns:layout="clr-namespace:KinectDemo2.Custom.Layout"
+               xmlns:conv="clr-namespace:KinectDemo2.Custom.Control.Converter"
+               xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+               x:Name="this"
+               xmlns:sfbutton="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+               Title="DataViewerPage">
+
+    <base:PageBase.Resources>
+        <ResourceDictionary>
+            <x:Double x:Key="Spacing_basic">10</x:Double>
+            <Color x:Key="Header_default">#c8efcd</Color>
+            <Color x:Key="Header_title_text_color">white</Color>
+            <x:Double x:Key="Header_title_text_size">15</x:Double>
+        </ResourceDictionary>
+        <Style TargetType="DatePicker">
+            <Setter Property="Format" Value="yyyy/MM/dd" />
+        </Style>
+        <Style TargetType="chart:SfCartesianChart">
+            <Setter Property="MinimumHeightRequest" Value="200" />
+        </Style>
+        <Style TargetType="layout:HeaderContainer">
+            <Setter Property="HeaderFillColor" Value="{x:StaticResource PagePrimaryColor}" />
+            <Setter Property="ContentFillColor" Value="white" />
+            <Setter Property="StrokeThickness" Value="2" />
+        </Style>
+    </base:PageBase.Resources>
+
+    <Grid RowDefinitions="*">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2.5*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Border x:Name="habit_information_icon"
+                IsVisible="true"
+                Stroke="Black"
+                StrokeThickness="3"
+                Background="Red"
+                Margin="10"
+                MinimumHeightRequest="{x:Static vm:DataViewerViewModel.HabitViewerOriginalHeight}"
+                MinimumWidthRequest="{x:Static vm:DataViewerViewModel.HabitViewerOriginalWidth}"
+                HeightRequest="{x:Static vm:DataViewerViewModel.HabitViewerOriginalHeight}"
+                WidthRequest="{x:Static vm:DataViewerViewModel.HabitViewerOriginalWidth}"
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                ZIndex="100">
+            <Label Text="{Binding HabitMessage}" 
+                   FontSize="Title" 
+                   TextColor="Violet" 
+                   HorizontalTextAlignment="Center" 
+                   VerticalTextAlignment="Center" />
+            <Border.GestureRecognizers>
+                <PointerGestureRecognizer PointerEnteredCommand="{Binding }" />
+                <TapGestureRecognizer Command="{Binding HabitInformationTappedCommand}" 
+                                    CommandParameter="{x:Reference habit_information_icon}" 
+                                    />
+            </Border.GestureRecognizers>
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="60" />
+            </Border.StrokeShape>
+        </Border>
+
+
+        <!-- 左グラフ -->
+        <ScrollView HorizontalScrollBarVisibility="Always"
+                    Grid.Column="0"
+                    VerticalScrollBarVisibility="Never">
+            <Grid ColumnDefinitions="2*, *" RowDefinitions="100, *, *" Padding="20" 
+                  RowSpacing="{x:StaticResource Spacing_basic}" 
+                  ColumnSpacing="5">
+                <layout:HeaderContainer Grid.Row="0"
+                                        Grid.ColumnSpan="2">
+                    <layout:HeaderContainer.Header>
+                        <Label Text="Notification"
+                               TextColor="{x:StaticResource Header_title_text_color}"
+                               HorizontalOptions="Start"
+                               VerticalOptions="Center" />
+                    </layout:HeaderContainer.Header>
+                    <layout:HeaderContainer.ContainerContent>
+                        <ScrollView BindingContext="{Binding Source={x:Reference this}, Path=BindingContext}">
+                            <HorizontalStackLayout>
+                                <Label Text="{Binding NotificationMessage}" 
+                                       TextColor="{StaticResource TextSubColor}" />
+                            </HorizontalStackLayout>
+                        </ScrollView>
+                    </layout:HeaderContainer.ContainerContent>
+                </layout:HeaderContainer>
+
+                <layout:HeaderContainer Grid.Row="1"
+                                        Grid.ColumnSpan="2">
+                    <layout:HeaderContainer.Header>
+                        <Grid Grid.Column="0"
+                              ColumnDefinitions="4*, *"
+                              BindingContext="{Binding Source={x:Reference this}, Path=BindingContext}">
+                            <Label Text="{Binding ChartTitle}"
+                                   TextColor="{x:StaticResource Header_title_text_color}"
+                                   FontSize="{x:StaticResource Header_title_text_size}"
+                                   Margin="{x:StaticResource Spacing_basic}"
+                                   HorizontalOptions="Start"
+                                   VerticalOptions="Center"/>
+                            <Picker Grid.Column="1"
+                                    ItemsSource="{x:Static vm:DataViewerViewModel.ModelNames}"
+                                    SelectedIndex="{Binding SelectedModelIndex}"
+                                    Background="white"
+                                    HorizontalOptions="End"/>
+                        </Grid>
+                    </layout:HeaderContainer.Header>
+                    
+                    <layout:HeaderContainer.ContainerContent>
+                        <chart:SfCartesianChart HorizontalOptions="Fill"
+                                                BindingContext="{Binding Source={x:Reference this}, Path=BindingContext}">
+
+                            <chart:SfCartesianChart.TooltipBehavior>
+                                <chart:ChartTooltipBehavior />
+                            </chart:SfCartesianChart.TooltipBehavior>
+
+                            <chart:SfCartesianChart.Legend>
+                                <chart:ChartLegend Placement="Top" />
+                            </chart:SfCartesianChart.Legend>
+
+                            <chart:SfCartesianChart.XAxes>
+
+                                <chart:DateTimeAxis Name="time_axis" IntervalType="Auto">
+
+                                    <chart:DateTimeAxis.Title>
+                                        <chart:ChartAxisTitle Text="time" FontSize="20" />
+                                    </chart:DateTimeAxis.Title>
+
+                                    <chart:DateTimeAxis.LabelStyle>
+                                        <chart:ChartAxisLabelStyle 
+                                            Stroke="gray" 
+                                            CornerRadius="5" StrokeWidth="2"
+                                            LabelFormat="MM/dd HH:mm" />
+                                    </chart:DateTimeAxis.LabelStyle>
+
+                                    <chart:DateTimeAxis.AxisLineStyle>
+                                        <chart:ChartLineStyle />
+                                    </chart:DateTimeAxis.AxisLineStyle>
+
+                                </chart:DateTimeAxis>
+
+                            </chart:SfCartesianChart.XAxes>
+
+                            <chart:SfCartesianChart.YAxes>
+
+                                <chart:NumericalAxis Name="score_axis">
+
+                                    <chart:NumericalAxis.Title>
+                                        <chart:ChartAxisTitle Text="score" FontSize="20" />
+                                    </chart:NumericalAxis.Title>
+
+                                    <chart:NumericalAxis.LabelStyle>
+                                        <chart:ChartAxisLabelStyle />
+                                    </chart:NumericalAxis.LabelStyle>
+
+                                    <chart:NumericalAxis.AxisLineStyle>
+                                        <chart:ChartLineStyle />
+                                    </chart:NumericalAxis.AxisLineStyle>
+
+                                </chart:NumericalAxis>
+
+                            </chart:SfCartesianChart.YAxes>
+
+                            <chart:SfCartesianChart.Series>
+
+                                <chart:LineSeries 
+                                    ItemsSource="{Binding TrackingList}"
+                                    XBindingPath="Time"
+                                    YBindingPath="Score"
+                                    ShowDataLabels="True"
+                                    EnableTooltip="True"
+                                    Label="tracking score">
+
+                                    <chart:LineSeries.DataLabelSettings>
+                                        <chart:CartesianDataLabelSettings LabelPlacement="Auto" />
+                                    </chart:LineSeries.DataLabelSettings>
+
+                                    <chart:LineSeries.TooltipTemplate>
+                                        <DataTemplate>
+                                            <VerticalStackLayout x:DataType="chart:TooltipInfo">
+
+                                                <VerticalStackLayout.Resources>
+                                                    <Style TargetType="Label">
+                                                        <Setter Property="TextColor" Value="White" />
+                                                    </Style>
+                                                </VerticalStackLayout.Resources>
+
+                                                <Label Text="{Binding Item, Converter={conv:TrackingDataConverter}, ConverterParameter='Time'}" />
+                                                <Label Text="{Binding Item, Converter={conv:TrackingDataConverter}, ConverterParameter='Score'}" />
+
+                                            </VerticalStackLayout>
+                                        </DataTemplate>
+                                    </chart:LineSeries.TooltipTemplate>
+
+                                </chart:LineSeries>
+
+                            </chart:SfCartesianChart.Series>
+
+                        </chart:SfCartesianChart>
+                    </layout:HeaderContainer.ContainerContent>
+                    
+                </layout:HeaderContainer>
+
+                <layout:HeaderContainer Grid.Row="2">
+
+                    <layout:HeaderContainer.Header>
+                        <Grid Grid.Column="0"
+                              ColumnDefinitions="4*, *"
+                              BindingContext="{Binding Source={x:Reference this}, Path=BindingContext}">
+                            <Label Text="{Binding ChartAverageTitle}"
+                                   TextColor="{x:StaticResource Header_title_text_color}"
+                                   FontSize="{x:StaticResource Header_title_text_size}"
+                                   Margin="{x:StaticResource Spacing_basic}"
+                                   HorizontalOptions="Start"
+                                   VerticalOptions="Center"/>
+                            <Picker Grid.Column="1"
+                                    ItemsSource="{x:Static vm:DataViewerViewModel.ModelNames}"
+                                    SelectedIndex="{Binding SelectedModelIndex}"
+                                    Background="white"
+                                    HorizontalOptions="End"/>
+                        </Grid>
+                    </layout:HeaderContainer.Header>
+
+                    <layout:HeaderContainer.ContainerContent>
+                        <chart:SfCartesianChart HorizontalOptions="Fill"
+                                                BindingContext="{Binding Source={x:Reference this}, Path=BindingContext}">
+
+                            <chart:SfCartesianChart.TooltipBehavior>
+                                <chart:ChartTooltipBehavior />
+                            </chart:SfCartesianChart.TooltipBehavior>
+
+                            <chart:SfCartesianChart.Legend>
+                                <chart:ChartLegend Placement="Top" />
+                            </chart:SfCartesianChart.Legend>
+
+                            <chart:SfCartesianChart.XAxes>
+
+                                <chart:DateTimeAxis Name="time_axis" IntervalType="Auto">
+
+                                    <chart:DateTimeAxis.Title>
+                                        <chart:ChartAxisTitle Text="time" FontSize="20" />
+                                    </chart:DateTimeAxis.Title>
+
+                                    <chart:DateTimeAxis.LabelStyle>
+                                        <chart:ChartAxisLabelStyle 
+                                            Stroke="gray" 
+                                            CornerRadius="5" StrokeWidth="2"
+                                            LabelFormat="MM/dd HH:mm" />
+                                    </chart:DateTimeAxis.LabelStyle>
+
+                                    <chart:DateTimeAxis.AxisLineStyle>
+                                        <chart:ChartLineStyle />
+                                    </chart:DateTimeAxis.AxisLineStyle>
+
+                                </chart:DateTimeAxis>
+
+                            </chart:SfCartesianChart.XAxes>
+
+                            <chart:SfCartesianChart.YAxes>
+
+                                <chart:NumericalAxis Name="score_axis">
+
+                                    <chart:NumericalAxis.Title>
+                                        <chart:ChartAxisTitle Text="score" FontSize="20" />
+                                    </chart:NumericalAxis.Title>
+
+                                    <chart:NumericalAxis.LabelStyle>
+                                        <chart:ChartAxisLabelStyle />
+                                    </chart:NumericalAxis.LabelStyle>
+
+                                    <chart:NumericalAxis.AxisLineStyle>
+                                        <chart:ChartLineStyle />
+                                    </chart:NumericalAxis.AxisLineStyle>
+
+                                </chart:NumericalAxis>
+
+                            </chart:SfCartesianChart.YAxes>
+
+                            <chart:SfCartesianChart.Series>
+
+                                <chart:LineSeries 
+                                    ItemsSource="{Binding TrackingAverageList}"
+                                    XBindingPath="Time"
+                                    YBindingPath="Score"
+                                    ShowDataLabels="True"
+                                    EnableTooltip="True"
+                                    Label="tracking score">
+
+                                    <chart:LineSeries.DataLabelSettings>
+                                        <chart:CartesianDataLabelSettings LabelPlacement="Auto" />
+                                    </chart:LineSeries.DataLabelSettings>
+
+                                    <chart:LineSeries.TooltipTemplate>
+                                        <DataTemplate>
+                                            <VerticalStackLayout x:DataType="chart:TooltipInfo">
+
+                                                <VerticalStackLayout.Resources>
+                                                    <Style TargetType="Label">
+                                                        <Setter Property="TextColor" Value="White" />
+                                                    </Style>
+                                                </VerticalStackLayout.Resources>
+
+                                                <Label Text="{Binding Item, Converter={conv:TrackingDataConverter}, ConverterParameter='Time'}" />
+                                                <Label Text="{Binding Item, Converter={conv:TrackingDataConverter}, ConverterParameter='Score'}" />
+
+                                            </VerticalStackLayout>
+                                        </DataTemplate>
+                                    </chart:LineSeries.TooltipTemplate>
+
+                                </chart:LineSeries>
+
+                            </chart:SfCartesianChart.Series>
+
+                        </chart:SfCartesianChart>
+                    </layout:HeaderContainer.ContainerContent>
+                    
+                </layout:HeaderContainer>
+
+                <layout:HeaderContainer Grid.Row="2"
+                                        Grid.Column="1">
+                    <layout:HeaderContainer.Header>
+                        <Grid RowDefinitions="*" 
+                              ColumnDefinitions="4*, *"
+                              BindingContext="{Binding Source={x:Reference this}, Path=BindingContext}">
+                            <Label Text="{Binding StatisticsTitle}"
+                                   TextColor="{x:StaticResource Header_title_text_color}"
+                                   FontSize="{x:StaticResource Header_title_text_size}"
+                                   Margin="{x:StaticResource Spacing_basic}"
+                                   HorizontalOptions="Start"
+                                   VerticalOptions="Center"/>
+                            <sfbutton:SfSegmentedControl 
+                                Grid.Column="1"
+                                SegmentWidth="50"
+                                CornerRadius="10"
+                                SegmentBackground="white"
+                                ItemsSource="{x:Static vm:DataViewerViewModel.DayStringSelections}"
+                                SelectedIndex="{Binding SelectedDaySelectionIndex, Mode=TwoWay}">
+                                <sfbutton:SfSegmentedControl.SelectionIndicatorSettings>
+                                    <sfbutton:SelectionIndicatorSettings Background="{x:StaticResource PageSubColor}"
+                                                                         TextColor="Black"/>
+                                </sfbutton:SfSegmentedControl.SelectionIndicatorSettings>
+                            </sfbutton:SfSegmentedControl>
+                        </Grid>
+                    </layout:HeaderContainer.Header>
+                    <layout:HeaderContainer.ContainerContent>
+                        <Grid RowDefinitions="*"
+                              Padding="{x:StaticResource Spacing_basic}"
+                              BindingContext="{Binding Source={x:Reference this}, Path=BindingContext}">
+                            <TableView>
+                            <TableRoot Title="{Binding StatisticsSubTitle}">
+                                <TableSection Title="平均">
+                                    <TextCell Text="{Binding Statistics.Mean, StringFormat='{0:F4}'}" />
+                                </TableSection>
+                                <TableSection Title="中央値">
+                                    <TextCell Text="{Binding Statistics.Median, StringFormat='{0:F4}'}" />
+                                </TableSection>
+                                <TableSection Title="標準偏差">
+                                    <TextCell Text="{Binding Statistics.Std, StringFormat='{0:F4}'}" />
+                                </TableSection>
+                            </TableRoot>
+                        </TableView>
+                        </Grid>
+                    </layout:HeaderContainer.ContainerContent>
+                </layout:HeaderContainer>
+            </Grid>
+        </ScrollView>
+
+        <!-- 右操作盤 -->
+        <Grid RowDefinitions="*"
+              ColumnDefinitions="2, *"
+              Grid.Column="1"
+              ColumnSpacing="10">
+            <BoxView Color="Black" Opacity=".2" />
+
+            <TableView Intent="Settings"
+                       HorizontalOptions="Center"
+                       Grid.Column="1">
+                <TableRoot Title="Filters">
+                    <TableSection Title="Field">
+                        <ViewCell>
+                            <HorizontalStackLayout x:Name="radioRoot"
+                                                   Spacing="20"
+                                                   RadioButtonGroup.GroupName="monitor"
+                                                   RadioButtonGroup.SelectedValue="{Binding SelectedMonitorValue, Converter={conv:MonitorValueToStringConverter}}">
+                                <HorizontalStackLayout.Resources>
+                                    <Style TargetType="Label">
+                                        <Setter Property="VerticalOptions" Value="Center" />
+                                    </Style>
+                                    <Style TargetType="RadioButton">
+                                        <Setter Property="GroupName" Value="monitor" />
+                                        <Setter Property="VerticalOptions" Value="Center" />
+                                    </Style>
+                                </HorizontalStackLayout.Resources>
+                                <RadioButton GroupName="monitor" Value="all" Content="All" />
+                                <RadioButton GroupName="monitor" Value="alert" Content="Alert" />
+                                <RadioButton GroupName="monitor" Value="monitor" Content="Monitor" />
+                            </HorizontalStackLayout>
+                        </ViewCell>
+                    </TableSection>
+                    <TableSection Title="Date">
+                        <ViewCell>
+                            <Grid RowDefinitions="*"
+                                  ColumnDefinitions="*, 3*"
+                                  ColumnSpacing="5">
+                                <Switch x:Name="date_lower_switch" 
+                                        IsToggled="{Binding IsDateToggled}"
+                                        ThumbColor="{StaticResource PageSubColor}"
+                                        OnColor="{StaticResource PagePrimaryColor}"/>
+                                <HorizontalStackLayout Grid.Column="1">
+                                    <DatePicker Date="{Binding SelectedLowerDate}"
+                                                IsVisible="{Binding Source={x:Reference date_lower_switch}, Path=IsToggled}"/>
+                                    <Label Text="~" 
+                                                Scale="1.2" 
+                                                VerticalTextAlignment="Center" 
+                                                Margin="10"
+                                                IsVisible="{Binding Source={x:Reference date_lower_switch}, Path=IsToggled}"/>
+                                    <DatePicker Date="{Binding SelectedUpperDate}" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </ViewCell>
+                    </TableSection>
+                    <TableSection Title="Time">
+                        <ViewCell>
+                            <VerticalStackLayout>
+                                <Grid RowDefinitions="*, 20, *"
+                                      ColumnDefinitions="*"
+                                      Padding="10"
+                                      RowSpacing="5"
+                                      IsVisible="{Binding Source={x:Reference date_lower_switch}, Path=IsToggled, Converter={conv:BooleanReverseConverter}}">
+                                    <TimePicker Grid.Row="0" 
+                                            Time="{Binding SelectedLowerTime}"
+                                            VerticalOptions="Center"
+                                            HorizontalOptions="Start"/>
+                                    <Image Grid.Row="1" 
+                                           Source="arrow_right_circle.png"
+                                           VerticalOptions="Center"
+                                           TranslationY="-5"/>
+                                    <TimePicker Grid.Row="2"
+                                            Time="{Binding SelectedUpperTime}"
+                                            VerticalOptions="Center"
+                                            HorizontalOptions="End"/>
+                                </Grid>
+                                <Label Text="指定日時に計測された全データを取得します。"
+                                       IsVisible="{Binding Source={x:Reference date_lower_switch}, Path=IsToggled}"
+                                       HorizontalOptions="Center"
+                                       Margin="10"/>
+                            </VerticalStackLayout>
+                        </ViewCell>
+                    </TableSection>
+                    <TableSection Title="">
+                        <ViewCell>
+                            <Button Text="Apply filters"
+                                    Margin="10"
+                                    BackgroundColor="{StaticResource PagePrimaryColor}"
+                                    Command="{Binding FilterClickedCommand}"/>
+                        </ViewCell>
+                    </TableSection>
+                </TableRoot>
+            </TableView>
+        </Grid>
+    </Grid>
+</base:PageBase>

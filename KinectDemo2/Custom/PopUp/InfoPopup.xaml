@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:popup="clr-namespace:KinectDemo2.Custom.PopUp"
+               x:Class="KinectDemo2.Custom.PopUp.InfoPopup"
+               x:DataType="popup:InfoPopup"
+               Color="Transparent">
+
+    <Grid RowDefinitions="100, *, 20"
+          ColumnDefinitions="*"
+          RowSpacing="10"
+          WidthRequest="{Static popup:InfoPopup.PopWidth}" 
+          HeightRequest="{Static popup:InfoPopup.PopHeight}">
+        <Grid.Resources>
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource TextPrimaryColor}" />
+            </Style>
+        </Grid.Resources>
+            
+        <Label x:Name="title"
+               Text="{Binding Title}"
+               FontSize="60"
+               FontFamily="ZenMaruGothicMedium"
+               Opacity="0"
+               HorizontalOptions="Center"
+               Margin="10">
+            <Label.Shadow>
+                <Shadow Offset="2, 2" Brush="{StaticResource TextSubColor}" Opacity="1" />
+            </Label.Shadow>
+        </Label>
+        <Frame Grid.Row="1"
+               BorderColor="Transparent"
+               HeightRequest="{Static popup:InfoPopup.BubbleHeight}"
+               WidthRequest="{Static popup:InfoPopup.BubbleWidth}"
+               CornerRadius="{Static popup:InfoPopup.PopRadius}"
+               IsClippedToBounds="True"
+               HorizontalOptions="Center"
+               VerticalOptions="Start"
+               BackgroundColor="Gray"
+        >
+            <Grid>
+                <Label x:Name="score"
+                       Text="{Binding Message}" 
+                       FontSize="40"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Center"
+                       ZIndex="99"
+                       Opacity="0"/>
+                <BoxView x:Name="boxView" 
+                         Color="{Static popup:InfoPopup.PopIndicatorColor}"
+                         HeightRequest="{Static popup:InfoPopup.BoxHeight}"
+                         WidthRequest="600"
+                         TranslationY="{Static popup:InfoPopup.InitialBoxTranslationY}"
+                         ZIndex="88"
+                         />
+            </Grid>
+        </Frame>
+        <HorizontalStackLayout Grid.Row="2"
+                               VerticalOptions="Start"
+                               HorizontalOptions="CenterAndExpand"
+                               Spacing="5"
+                               IsVisible="{Binding ShowCheckBox}">
+            <CheckBox IsChecked="{Binding IsChecked}"
+                      Color="{StaticResource PagePrimaryColor}"/>
+            <Label Text="今日は表示しない"
+                   TextColor="{StaticResource TextSubColor}"/>
+        </HorizontalStackLayout>
+    </Grid>
+
+</toolkit:Popup>

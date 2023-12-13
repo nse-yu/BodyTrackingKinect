@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<base:PageBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               x:Class="KinectDemo2.MainPage"
+               x:DataType="viewModel:KinectSensorViewModel"
+               xmlns:controls="clr-namespace:KinectDemo2.Custom.Page"
+               xmlns:btn="clr-namespace:KinectDemo2.Custom.Control.Button"
+               xmlns:base="clr-namespace:KinectDemo2.Custom.Page.Base"
+               xmlns:viewModel="clr-namespace:KinectDemo2.Custom.ViewModel">
+
+    <Grid RowDefinitions="*">
+        <Grid RowDefinitions="*, 50"
+              ColumnDefinitions="*, *"
+              HorizontalOptions="FillAndExpand"
+              BackgroundColor="Black">
+            <StackLayout Grid.Row="0"
+                     Grid.Column="0"
+                     VerticalOptions="FillAndExpand">
+                <Image VerticalOptions="CenterAndExpand"
+                   Source="{Binding ImageRGB}"/>
+            </StackLayout>
+
+            <StackLayout Grid.Row="0"
+                     Grid.Column="1"
+                     VerticalOptions="FillAndExpand">
+                <Image VerticalOptions="CenterAndExpand" 
+                   Source="{Binding ImageDepth}" />
+            </StackLayout>
+
+            <FlexLayout Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    BackgroundColor="{StaticResource PagePrimaryColor}"
+                    JustifyContent="SpaceBetween"
+                    Padding="10,5">
+                <Label x:Name="text_connected_devices"
+                   Text="{Binding TextConnectedDevices}"
+                   VerticalOptions="CenterAndExpand"
+                   TextColor="{StaticResource TextPrimaryColor}"
+                   Margin="10,0,0,0"/>
+                <HorizontalStackLayout Spacing="40">
+                    <btn:PlayButton IsProcessing="{Binding IsPlaying, Mode=TwoWay}"
+                                    PreProcessCommand="{Binding BeforePlayCommand}"
+                                    ClickedCommand="{Binding PlayingCommand}"
+                                    ProcessedCommand="{Binding AfterPlayCommand}"
+                                    StoppedCommand="{Binding StoppedCommand}"/>
+                    <btn:ReloadButton Margin="0,0,10,0"
+                                      ReloadedCommand="{Binding ReloadedCommand}"
+                                      ReloadingCommand="{Binding ReloadingCommand}"/>
+                </HorizontalStackLayout>
+            </FlexLayout>
+        </Grid>
+    </Grid>
+</base:PageBase>

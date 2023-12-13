@@ -1,0 +1,25 @@
+version: "2.0"
+services:
+  body_tracking_db:
+    build:
+      context: ./db
+      dockerfile: ./Dockerfile
+    image: ny2244/body_tracking_db
+    volumes:
+      - ./db/data:/var/lib/influxdb2
+      - ./db/config:/etc/influxdb2
+    ports:
+      - "8086:8086"
+    container_name: body_tracking_db
+  body_tracking_server:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: ny2244/body_tracking_server
+    ports:
+      - "5005:5005"
+    container_name: body_tracking_server
+    depends_on:
+      - body_tracking_db
+    links:
+      - body_tracking_db

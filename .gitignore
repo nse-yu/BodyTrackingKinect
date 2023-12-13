@@ -1,0 +1,14 @@
+.vs
+/KinectDemo2Tests/bin
+/KinectDemo2Tests/obj
+/KinectDemo2/.vs
+/KinectDemo2/bin
+/KinectDemo2/Model
+/KinectDemo2/Custom/Constants
+/KinectDemo2/obj
+/KinectDemo2/venv
+/KinectDemo2/license.json
+/BodyTrackingServer/.idea
+/BodyTrackingServer/.mvn
+/BodyTrackingServer/db
+/BodyTrackingServer/target

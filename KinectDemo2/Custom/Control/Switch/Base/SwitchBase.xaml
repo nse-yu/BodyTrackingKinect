@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:this="clr-namespace:KinectDemo2.Custom.Control.Switch.Base"
+             x:Class="KinectDemo2.Custom.Control.Switch.Base.SwitchBase"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
+             x:DataType="this:SwitchBase"
+             VerticalOptions="Center">
+    <ContentView.Shadow>
+        <Shadow Brush="black"
+                Offset="1, 1"
+                Opacity=".4" />
+    </ContentView.Shadow>
+    <Grid RowDefinitions="*"
+          ColumnDefinitions="*, 100">
+        <this:SwitchCanvasView 
+            x:Name="graphics"
+            MinimumHeightRequest="{x:Static this:SwitchBase.MinHeight}"
+            MinimumWidthRequest="{x:Static this:SwitchBase.MinWidth}">
+            <this:SwitchCanvasView.GestureRecognizers>
+                <TapGestureRecognizer x:Name="TappedRecog" />
+            </this:SwitchCanvasView.GestureRecognizers>
+        </this:SwitchCanvasView>
+        <Label Grid.Column="1"
+               x:Name="label"
+               VerticalOptions="Center"/>
+    </Grid>
+</ContentView>
