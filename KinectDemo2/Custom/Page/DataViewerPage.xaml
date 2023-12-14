@@ -37,60 +37,78 @@
 
     <Grid RowDefinitions="*">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2.5*" />
+            <ColumnDefinition Width="2.3*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Border x:Name="habit_information_icon"
-                IsVisible="true"
-                Stroke="Black"
-                StrokeThickness="3"
-                Background="Red"
-                Margin="10"
-                MinimumHeightRequest="{x:Static vm:DataViewerViewModel.HabitViewerOriginalHeight}"
-                MinimumWidthRequest="{x:Static vm:DataViewerViewModel.HabitViewerOriginalWidth}"
-                HeightRequest="{x:Static vm:DataViewerViewModel.HabitViewerOriginalHeight}"
-                WidthRequest="{x:Static vm:DataViewerViewModel.HabitViewerOriginalWidth}"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                ZIndex="100">
-            <Label Text="{Binding HabitMessage}" 
-                   FontSize="Title" 
-                   TextColor="Violet" 
-                   HorizontalTextAlignment="Center" 
-                   VerticalTextAlignment="Center" />
-            <Border.GestureRecognizers>
-                <PointerGestureRecognizer PointerEnteredCommand="{Binding }" />
-                <TapGestureRecognizer Command="{Binding HabitInformationTappedCommand}" 
-                                    CommandParameter="{x:Reference habit_information_icon}" 
-                                    />
-            </Border.GestureRecognizers>
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="60" />
-            </Border.StrokeShape>
-        </Border>
-
 
         <!-- 左グラフ -->
         <ScrollView HorizontalScrollBarVisibility="Always"
                     Grid.Column="0"
                     VerticalScrollBarVisibility="Never">
-            <Grid ColumnDefinitions="2*, *" RowDefinitions="100, *, *" Padding="20" 
+            <Grid ColumnDefinitions="2*, *" RowDefinitions="*, *, *" Padding="20" 
                   RowSpacing="{x:StaticResource Spacing_basic}" 
                   ColumnSpacing="5">
+                
                 <layout:HeaderContainer Grid.Row="0"
                                         Grid.ColumnSpan="2">
                     <layout:HeaderContainer.Header>
-                        <Label Text="Notification"
+                        <FlexLayout JustifyContent="SpaceBetween">
+                            <Label Text="Notification"
                                TextColor="{x:StaticResource Header_title_text_color}"
                                HorizontalOptions="Start"
                                VerticalOptions="Center" />
+                            <btn:ReloadButton ReloadingCommand="{Binding HabitNotificationReloadCommand}"/>
+                        </FlexLayout>
                     </layout:HeaderContainer.Header>
                     <layout:HeaderContainer.ContainerContent>
                         <ScrollView BindingContext="{Binding Source={x:Reference this}, Path=BindingContext}">
-                            <HorizontalStackLayout>
-                                <Label Text="{Binding NotificationMessage}" 
+                            <Grid RowDefinitions="*, *, Auto"
+                                  RowSpacing="10">
+                                <Label Grid.Row="0" 
+                                       Text="{Binding NotificationMessage}" 
                                        TextColor="{StaticResource TextSubColor}" />
-                            </HorizontalStackLayout>
+                                <!--<Border x:Name="habit_information_icon"
+                                        IsVisible="true"
+                                        Stroke="Black"
+                                        StrokeThickness="3"
+                                        Background="Red"
+                                        Margin="10"
+                                        MinimumHeightRequest="{x:Static vm:DataViewerViewModel.HabitViewerOriginalHeight}"
+                                        MinimumWidthRequest="{x:Static vm:DataViewerViewModel.HabitViewerOriginalWidth}"
+                                        HeightRequest="{x:Static vm:DataViewerViewModel.HabitViewerOriginalHeight}"
+                                        WidthRequest="{x:Static vm:DataViewerViewModel.HabitViewerOriginalWidth}"
+                                        HorizontalOptions="Start"
+                                        VerticalOptions="Start"
+                                        ZIndex="100">
+                                    <Label Text="{Binding AIAssistantMessage}" 
+                                           FontSize="Title" 
+                                           TextColor="Violet" 
+                                           HorizontalTextAlignment="Center" 
+                                           VerticalTextAlignment="Center" />
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding HabitInformationTappedCommand}" 
+                                                              CommandParameter="{x:Reference habit_information_icon}" />
+                                    </Border.GestureRecognizers>
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="60" />
+                                    </Border.StrokeShape>
+                                </Border>-->
+                                <btn:IconProcessingButton Grid.Row="1"
+                                                          x:Name="assistant_process_btn"
+                                                          Icon="play_circle.png"
+                                                          WidthRequest="20"
+                                                          HeightRequest="20"
+                                                          ClickedCommand="{Binding HabitInformationTappedCommand}"
+                                                          IsProcessing="{Binding IsAssistantProcessing}"
+                                                          HorizontalOptions="Start"
+                                                          ToolTipProperties.Text="help"/>
+                                <Label Grid.Row="2"
+                                       IsVisible="{Binding Source={x:Reference assistant_process_btn}, Path=IsProcessing}"
+                                       Text="{Binding AIAssistantMessage}"
+                                       FontSize="Default" 
+                                       TextColor="{StaticResource TextSubColor}" 
+                                       HorizontalTextAlignment="Start"/>
+                            </Grid>
                         </ScrollView>
                     </layout:HeaderContainer.ContainerContent>
                 </layout:HeaderContainer>
@@ -328,9 +346,7 @@
                 <layout:HeaderContainer Grid.Row="2"
                                         Grid.Column="1">
                     <layout:HeaderContainer.Header>
-                        <Grid RowDefinitions="*" 
-                              ColumnDefinitions="4*, *"
-                              BindingContext="{Binding Source={x:Reference this}, Path=BindingContext}">
+                        <HorizontalStackLayout BindingContext="{Binding Source={x:Reference this}, Path=BindingContext}">
                             <Label Text="{Binding StatisticsTitle}"
                                    TextColor="{x:StaticResource Header_title_text_color}"
                                    FontSize="{x:StaticResource Header_title_text_size}"
@@ -338,10 +354,10 @@
                                    HorizontalOptions="Start"
                                    VerticalOptions="Center"/>
                             <sfbutton:SfSegmentedControl 
-                                Grid.Column="1"
                                 SegmentWidth="50"
                                 CornerRadius="10"
                                 SegmentBackground="white"
+                                HorizontalOptions="Start"
                                 ItemsSource="{x:Static vm:DataViewerViewModel.DayStringSelections}"
                                 SelectedIndex="{Binding SelectedDaySelectionIndex, Mode=TwoWay}">
                                 <sfbutton:SfSegmentedControl.SelectionIndicatorSettings>
@@ -349,7 +365,7 @@
                                                                          TextColor="Black"/>
                                 </sfbutton:SfSegmentedControl.SelectionIndicatorSettings>
                             </sfbutton:SfSegmentedControl>
-                        </Grid>
+                        </HorizontalStackLayout>
                     </layout:HeaderContainer.Header>
                     <layout:HeaderContainer.ContainerContent>
                         <Grid RowDefinitions="*"

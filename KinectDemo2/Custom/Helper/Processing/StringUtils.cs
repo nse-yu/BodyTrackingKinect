@@ -10,8 +10,8 @@ namespace KinectDemo2.Custom.Helper.Processing
             public override string ConvertName(string name) => string.Concat(name[..1].ToLower(), name.AsSpan(1));
         }
 
-        static bool ContainsJapanese(string input) => JapaneseWord().IsMatch(input);
-        static Tuple<double, double, double> CalculateAlphabetRatios(string input)
+        public static bool ContainsJapanese(string input) => JapaneseWord().IsMatch(input);
+        public static Tuple<double, double, double> CalculateAlphabetRatios(string input)
         {
             int countA = input.Count(c => c == 'A');
             int countB = input.Count(c => c == 'B');

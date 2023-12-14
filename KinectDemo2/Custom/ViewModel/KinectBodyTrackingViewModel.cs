@@ -28,7 +28,7 @@ namespace KinectDemo2.Custom.ViewModel
     public class KinectBodyTrackingViewModel : KinectDataStreamBaseViewModel
     {
         private const double IMAGE_RESIZE_RATIO = .6;
-        private const int TIMER_PERIOD = 60000;
+        private const int TIMER_SEND_PERIOD = 60000*3;
 
         private static readonly IDBService _DBService = App.DBService;
         private static readonly IPythonService _PythonService = App.PythonService;
@@ -760,7 +760,7 @@ namespace KinectDemo2.Custom.ViewModel
             {
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    habitReportTimer = new Timer(new TimerCallback(SendHabitReportsAsync), null, TIMER_PERIOD, TIMER_PERIOD);
+                    habitReportTimer = new Timer(new TimerCallback(SendHabitReportsAsync), null, TIMER_SEND_PERIOD, TIMER_SEND_PERIOD);
                 });
             });
         }

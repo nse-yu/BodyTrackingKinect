@@ -10,8 +10,8 @@ namespace KinectDemo2.Custom.ViewModel
 {
     public class DataViewerViewModel : BaseViewModel
     {
-        public const double HabitViewerOriginalWidth = 60;
-        public const double HabitViewerOriginalHeight = 60;
+        public const double HabitViewerOriginalWidth = 20;
+        public const double HabitViewerOriginalHeight = 20;
         public const double HabitViewerMaxWidth = 600;
         public const double HabitViewerMaxHeight = 200;
 
@@ -24,6 +24,7 @@ namespace KinectDemo2.Custom.ViewModel
         private int _selectedModelIndex = 1;
         private int _selectedDaySelectionIndex = 0;
         private bool _isDateToggled = false;
+        private bool _isAssistantProcessing = false;
         private string _notificationMessage = "No message...";
         private string _habitMessage = "";
         private List<BodyTrackingScore> _trackingList = new();
@@ -94,6 +95,16 @@ namespace KinectDemo2.Custom.ViewModel
                 OnPropertyChanged(nameof(IsDateToggled));
             }
         }
+        public bool IsAssistantProcessing
+        {
+            get => _isAssistantProcessing;
+            set
+            {
+                if (_isAssistantProcessing == value) return;
+                _isAssistantProcessing = value;
+                OnPropertyChanged(nameof(IsAssistantProcessing));
+            }
+        }
         public string NotificationMessage
         {
             get => _notificationMessage;
@@ -104,14 +115,14 @@ namespace KinectDemo2.Custom.ViewModel
                 OnPropertyChanged(nameof(NotificationMessage));
             }
         }
-        public string HabitMessage
+        public string AIAssistantMessage
         {
             get => _habitMessage;
             set
             {
                 if (_habitMessage == value) return;
                 _habitMessage = value;
-                OnPropertyChanged(nameof(HabitMessage));
+                OnPropertyChanged(nameof(AIAssistantMessage));
             }
         }
         public bool IsExpanded { get; set; } = false;
@@ -184,6 +195,7 @@ namespace KinectDemo2.Custom.ViewModel
         }
         public ICommand FilterClickedCommand { get; set; }
         public ICommand HabitInformationTappedCommand { get; set; }
+        public ICommand HabitNotificationReloadCommand { get; set; }
         
 
         public DataViewerViewModel(IDBService dbService)
@@ -198,6 +210,7 @@ namespace KinectDemo2.Custom.ViewModel
         {
             FilterClickedCommand = new Command(RequestUpdate);
             HabitInformationTappedCommand = new Command(AnimateHabitInfomation());
+            HabitNotificationReloadCommand = new Command(() => UpdateHabitReminder());
         }
 
         private Animation CreateScaleAnimation(View view, double heightTo, double widthTo)
@@ -219,16 +232,16 @@ namespace KinectDemo2.Custom.ViewModel
             {
                 await Task.Delay(duration);
                 var randIndex = restMessageLength == 1 ? 1 : new Random((int)DateTime.Now.Ticks).Next(minValue: 0, maxValue: restMessageLength);
-                HabitMessage += message.Substring(currentIndex, randIndex);
+                AIAssistantMessage += message.Substring(currentIndex, randIndex);
                 currentIndex += randIndex;
                 restMessageLength -= randIndex;
             }
         }
-
         private Action<object> AnimateHabitInfomation()
         {
             return async arg =>
             {
+                /*
                 IsExpanded = !IsExpanded;
                 View expandable_icon = arg as View;
 
@@ -242,8 +255,14 @@ namespace KinectDemo2.Custom.ViewModel
                 });
 
                 //var response = await _completionApi.GetCompletion("hello, gpt assistant!");
-                if (IsExpanded) await ResponseLikeChatGPT("Hello! I'm AI assistant.\r\nI can help you to improve your health!!");
-                else HabitMessage = string.Empty;
+                var response = "Hello! I'm AI assistant.\r\nI can help you to improve your health!!";
+                if (IsExpanded) await ResponseLikeChatGPT(response);
+                else AIAssistantMessage = string.Empty;
+                */
+                var response = "Hello! I'm AI assistant.\r\nI can help you to improve your health!!";
+                await ResponseLikeChatGPT(response);
+                await Task.Delay(30000);
+                InitAssistant();
             };
         }
         private void RequestUpdate()
@@ -256,7 +275,9 @@ namespace KinectDemo2.Custom.ViewModel
                     await UpdateTrackingList(model);
                     UpdateTrackingAverageList();
                     UpdateStatistics();
-                }catch (HttpRequestException)
+                    UpdateHabitReminder();
+                }
+                catch (HttpRequestException)
                 {
                     return;
                 }
@@ -303,6 +324,16 @@ namespace KinectDemo2.Custom.ViewModel
             StatisticsSubTitle = $"過去{past}日間の統計";
             OnPropertyChanged(nameof(StatisticsSubTitle));
         }
+        private async void UpdateHabitReminder()
+        {
+            var habits = await _dbService.GetHabitsAsync(start: new DateTime(2023, 12, 10), stop: SelectedUpperDate);
+            var posturalAbnormalityCode = string.Join("",(from habit in habits select habit.PosturalAbnormalityCode));
+            (double rateA, double rateB, double rateC) = StringUtils.CalculateAlphabetRatios(posturalAbnormalityCode);
+            var now = DateTime.Now;
+            NotificationMessage = 
+                $"Aの兆候が{rateA*10}割、Bの兆候が{rateB*10}割、Cの兆候が{rateC*10}割ほど確認できました。\r\n" +
+                $"【計測期間: {now.AddDays(-(now.Day - 1)):M} ~ {now.Date:M}】";
+        }
 
 
         private void InitDates()
@@ -319,7 +350,11 @@ namespace KinectDemo2.Custom.ViewModel
             OnPropertyChanged(nameof(SelectedUpperTime));
             OnPropertyChanged(nameof(SelectedLowerTime));
         }
-
+        private void InitAssistant()
+        {
+            AIAssistantMessage = string.Empty;
+            IsAssistantProcessing = false;
+        }
 
         private async Task<List<BodyTrackingScore>> FetchScores(string modelName)
         {

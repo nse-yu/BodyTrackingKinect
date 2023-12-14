@@ -15,6 +15,8 @@ namespace KinectDemo2.Custom.Service
         Task<List<BodyTrackingScore>> GetScoresAsync(long past);
         Task<List<BodyTrackingScore>> GetScoresAsync(DateTime start, DateTime stop);
         Task<List<BodyTrackingScore>> GetScoresAsync(string model, DateTime start, DateTime stop);
+        Task<List<BodyTrackingHabit>> GetHabitsAsync(long past);
+        Task<List<BodyTrackingHabit>> GetHabitsAsync(DateTime start, DateTime stop);
         bool IsValidModel(string model);
     }
 
