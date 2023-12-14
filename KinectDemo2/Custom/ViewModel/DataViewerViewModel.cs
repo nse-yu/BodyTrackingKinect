@@ -15,7 +15,6 @@ namespace KinectDemo2.Custom.ViewModel
         public const double HabitViewerMaxWidth = 600;
         public const double HabitViewerMaxHeight = 200;
 
-        private const uint animation_duration = 400;
 
         private readonly IDBService _dbService;
         private readonly CompletionApi _completionApi;
@@ -213,16 +212,6 @@ namespace KinectDemo2.Custom.ViewModel
             HabitNotificationReloadCommand = new Command(() => UpdateHabitReminder());
         }
 
-        private Animation CreateScaleAnimation(View view, double heightTo, double widthTo)
-        {
-            var anime = new Animation();
-            var horizontal_anime = new Animation(width => view.WidthRequest = width, view.Width, widthTo);
-            var vertical_anime = new Animation(height => view.HeightRequest = height, view.Height, heightTo);
-            anime.Add(0, 1, horizontal_anime);
-            anime.Add(0, 1, vertical_anime);
-
-            return anime;
-        }
         private async ValueTask ResponseLikeChatGPT(string message, int duration = 600)
         {
             var restMessageLength = message.Length;
